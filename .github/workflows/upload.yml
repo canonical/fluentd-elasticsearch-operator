@@ -19,9 +19,9 @@ jobs:
           credentials: "${{ secrets.CHARMCRAFT_AUTH }}"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Select charmhub channel
-        uses: canonical/charming-actions/channel@1.0.2
-        id: channel
+#      - name: Select charmhub channel
+#        uses: canonical/charming-actions/channel@1.0.2
+#        id: channel
 
       - name: Upload charm to charmhub
         uses: canonical/charming-actions/upload-charm@1.0.2
@@ -29,4 +29,4 @@ jobs:
           credentials: "${{ secrets.CHARMCRAFT_AUTH }}"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           upload-image: "false"
-          channel: "${{ steps.channel.outputs.name }}"
+          channel: "edge"

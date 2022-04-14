@@ -9,7 +9,7 @@ elasticsearch.
 ## Usage
 
 ```bash
-juju deploy ./fluentd-elasticsearch_ubuntu-20.04-amd64.charm --resource fluentd-elasticsearch-image=gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
+juju deploy fluentd-elasticsearch --trust --channel edge
 ```
 
 ## OCI Images

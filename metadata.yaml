@@ -21,6 +21,7 @@ resources:
     type: oci-image
     description: OCI image for fluentd-elasticsearch
     upstream-source: gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
+
 storage:
   config:
     type: filesystem
