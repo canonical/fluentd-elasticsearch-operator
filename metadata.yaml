@@ -1,0 +1,28 @@
+# Copyright 2021 Canonical
+# See LICENSE file for licensing details.
+
+name: fluentd-elasticsearch
+description: |
+  Fluentd is an open-source data collector for a unified logging layer. Fluentd allows you to unify data collection and
+  consumption for better use and understanding of data. This fluentd charm is specifically built to forward logs to
+  elasticsearch.
+summary: |
+  A charm to manage fluentd elasticsearch integration on kubernetes
+
+containers:
+  fluentd-elasticsearch:
+    resource: fluentd-elasticsearch-image
+    mounts:
+      - storage: config
+        location: /etc/fluent/config.d
+
+resources:
+  fluentd-elasticsearch-image:
+    type: oci-image
+    description: OCI image for fluentd-elasticsearch
+    upstream-source: gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
+storage:
+  config:
+    type: filesystem
+    description: Configs storage
+    minimum-size: 1M
