@@ -12,6 +12,15 @@ elasticsearch.
 juju deploy fluentd-elasticsearch --trust --channel edge
 ```
 
+## Config
+
+```bash
+juju config fluentd-elasticsearch elasticsearch-url="yourelasticsearch:9200"
+```
+
+> The elasticseach URL will be modeled using juju relations once there is a kubernetes
+> charm for elasticsearch.
+
 ## OCI Images
 
 Default: gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
