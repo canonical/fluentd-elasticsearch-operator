@@ -1,4 +1,4 @@
-# Copyright 2021 Canonical
+# Copyright 2022 Canonical
 # See LICENSE file for licensing details.
 
 name: fluentd-elasticsearch

@@ -1,4 +1,4 @@
-# Copyright 2021 Canonical Ltd.
+# Copyright 2022 Canonical Ltd.
 # See LICENSE file for licensing details.
 
 import unittest
@@ -84,7 +84,7 @@ class TestCharm(unittest.TestCase):
 
         assert self.harness.charm.unit.status == ActiveStatus()
 
-    def test_given_bad_config_when_pebble_ready_then_status_is_active(self):
+    def test_given_bad_config_when_pebble_ready_then_status_is_blocked(self):
         config = {"elasticsearch-url": "abcd1234"}
         self.harness.container_pebble_ready(container_name="fluentd-elasticsearch")
 

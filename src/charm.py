@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-# Copyright 2021 Canonical Ltd.
+# Copyright 2022 Canonical Ltd.
 # See LICENSE file for licensing details.
 
 import logging
+import re
 
 from charms.observability_libs.v0.kubernetes_service_patch import KubernetesServicePatch
 from ops.charm import CharmBase
@@ -53,8 +54,8 @@ class FluentdElasticsearchCharm(CharmBase):
         )
 
     def _write_to_file(self, source_directory: str, destination_directory: str):
-        file = open(source_directory, "r")
-        file_content = file.read()
+        with open(source_directory, "r") as file:
+            file_content = file.read()
         self._container.push(destination_directory, file_content)
 
     def _configure(self, event):
@@ -109,10 +110,10 @@ class FluentdElasticsearchCharm(CharmBase):
     @property
     def _elasticsearch_config_is_valid(self) -> bool:
         elasticsearch_url = self.model.config.get("elasticsearch-url")
-        elasticsearch_url_split = elasticsearch_url.split(":")
-        if len(elasticsearch_url_split) != 2:
+        if re.match("^[a-zA-Z0-9._-]+:[0-9]+$", elasticsearch_url):
+            return True
+        else:
             return False
-        return True
 
 
 if __name__ == "__main__":
