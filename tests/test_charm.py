@@ -19,32 +19,12 @@ class TestCharm(unittest.TestCase):
         self.addCleanup(self.harness.cleanup)
         self.harness.begin()
 
-    def test_given_default_config_when_pebble_ready_then_plan_is_filled_with_fluentd_service_content(  # noqa: E501
-        self,
-    ):
-        default_config = self.harness.charm.config
-        elasticsearch_url = default_config["elasticsearch-url"].split(":")
-
-        expected_plan = {
-            "services": {
-                "fluentd-elasticsearch": {
-                    "override": "replace",
-                    "summary": "fluentd_elasticsearch",
-                    "startup": "enabled",
-                    "command": "./run.sh",
-                    "environment": {
-                        "OUTPUT_HOST": elasticsearch_url[0],
-                        "OUTPUT_PORT": int(elasticsearch_url[1]),
-                        "OUTPUT_BUFFER_CHUNK_LIMIT": "2M",
-                        "OUTPUT_BUFFER_QUEUE_LIMIT": 8,
-                    },
-                }
-            },
-        }
-
+    def test_given_default_config_when_pebble_ready_then_status_is_blocked(self):
         self.harness.container_pebble_ready(container_name="fluentd-elasticsearch")
-        updated_plan = self.harness.get_container_pebble_plan("fluentd-elasticsearch").to_dict()
-        self.assertEqual(expected_plan, updated_plan)
+
+        assert self.harness.charm.unit.status == BlockedStatus(
+            "Config for elasticsearch is not valid. Format should be <hostname>:<port>"
+        )
 
     def test_given_good_config_when_pebble_ready_then_plan_is_filled_with_fluentd_service_content(
         self,

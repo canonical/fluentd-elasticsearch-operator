@@ -31,7 +31,17 @@ class FluentdElasticsearchCharm(CharmBase):
         self._service_patcher = KubernetesServicePatch(charm=self, ports=[("fluentd", 24224)])
 
     def _on_install(self, event):
-        self._write_config_files()
+        if self._elasticsearch_config_is_valid:
+            if self._container.can_connect():
+                self._write_config_files()
+            else:
+                logger.info("Can't connect to container to write config file - Deferring")
+                event.defer()
+                return
+        else:
+            self.unit.status = BlockedStatus(
+                "Config for elasticsearch is not valid. Format should be <hostname>:<port>"
+            )
 
     def _write_config_files(self):
         base_source_directory = "src/config_files"
@@ -54,6 +64,7 @@ class FluentdElasticsearchCharm(CharmBase):
         )
 
     def _write_to_file(self, source_directory: str, destination_directory: str):
+        logger.info(f"Writing config file to {destination_directory}")
         with open(source_directory, "r") as file:
             file_content = file.read()
         self._container.push(destination_directory, file_content)
@@ -110,6 +121,8 @@ class FluentdElasticsearchCharm(CharmBase):
     @property
     def _elasticsearch_config_is_valid(self) -> bool:
         elasticsearch_url = self.model.config.get("elasticsearch-url")
+        if not elasticsearch_url:
+            return False
         if re.match("^[a-zA-Z0-9._-]+:[0-9]+$", elasticsearch_url):
             return True
         else:
