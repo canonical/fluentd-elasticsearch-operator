@@ -9,7 +9,7 @@ elasticsearch.
 ## Usage
 
 ```bash
-juju deploy fluentd-elasticsearch --trust --channel edge --options elasticsearch-url="yourelasticsearch:9200"
+juju deploy fluentd-elasticsearch --trust --channel edge --config elasticsearch-url="yourelasticsearch:9200"
 ```
 
 ## Config

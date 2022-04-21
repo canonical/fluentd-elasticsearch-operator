@@ -23,25 +23,11 @@ class FluentdElasticsearchCharm(CharmBase):
         An instance of this object everytime an event occurs
         """
         super().__init__(*args)
-        self.framework.observe(self.on.install, self._on_install)
         self.framework.observe(self.on.fluentd_elasticsearch_pebble_ready, self._configure)
         self.framework.observe(self.on.config_changed, self._configure)
         self._container_name = self._service_name = "fluentd-elasticsearch"
         self._container = self.unit.get_container(self._container_name)
         self._service_patcher = KubernetesServicePatch(charm=self, ports=[("fluentd", 24224)])
-
-    def _on_install(self, event):
-        if self._elasticsearch_config_is_valid:
-            if self._container.can_connect():
-                self._write_config_files()
-            else:
-                logger.info("Can't connect to container to write config file - Deferring")
-                event.defer()
-                return
-        else:
-            self.unit.status = BlockedStatus(
-                "Config for elasticsearch is not valid. Format should be <hostname>:<port>"
-            )
 
     def _write_config_files(self):
         base_source_directory = "src/config_files"
