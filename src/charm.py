@@ -5,7 +5,10 @@
 import logging
 import re
 
-from charms.observability_libs.v0.kubernetes_service_patch import KubernetesServicePatch
+from charms.observability_libs.v1.kubernetes_service_patch import (
+    KubernetesServicePatch,
+    ServicePort,
+)
 from ops.charm import CharmBase
 from ops.main import main
 from ops.model import ActiveStatus, BlockedStatus, MaintenanceStatus, WaitingStatus
@@ -27,7 +30,9 @@ class FluentdElasticsearchCharm(CharmBase):
         self.framework.observe(self.on.config_changed, self._configure)
         self._container_name = self._service_name = "fluentd-elasticsearch"
         self._container = self.unit.get_container(self._container_name)
-        self._service_patcher = KubernetesServicePatch(charm=self, ports=[("fluentd", 24224)])
+        self._service_patcher = KubernetesServicePatch(
+            charm=self, ports=[ServicePort(name="fluentd", port=24224)]
+        )
 
     def _write_config_files(self):
         base_source_directory = "src/config_files"
@@ -89,9 +94,9 @@ class FluentdElasticsearchCharm(CharmBase):
                         "command": "./run.sh",
                         "environment": {
                             "OUTPUT_HOST": elasticsearch_url,
-                            "OUTPUT_PORT": int(elasticsearch_port),
+                            "OUTPUT_PORT": int(elasticsearch_port),  # type: ignore [dict-item]
                             "OUTPUT_BUFFER_CHUNK_LIMIT": "2M",
-                            "OUTPUT_BUFFER_QUEUE_LIMIT": 8,
+                            "OUTPUT_BUFFER_QUEUE_LIMIT": 8,  # type: ignore [dict-item]
                         },
                     }
                 },
@@ -101,7 +106,7 @@ class FluentdElasticsearchCharm(CharmBase):
     def _get_elasticsearch_config(self) -> tuple:
         # TODO: Elasticsearch url and port should be passed through relationship
         elasticsearch_url = self.model.config.get("elasticsearch-url")
-        elasticsearch_url_split = elasticsearch_url.split(":")
+        elasticsearch_url_split = elasticsearch_url.split(":")  # type: ignore [union-attr]
         return elasticsearch_url_split[0], elasticsearch_url_split[1]
 
     @property
