@@ -39,9 +39,13 @@ class FluentdElasticsearchCharm(CharmBase):
         self._container = self.unit.get_container(self._container_name)
         self._service_patcher = KubernetesServicePatch(
             charm=self,
-            ports=[ServicePort(name="fluentd", port=24224)],
+            ports=[ServicePort(name="forward", port=24224)],
             service_type="LoadBalancer",
             service_name="fluentd",
+            additional_annotations={
+                "service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags": "magma-uuid=default",
+                "external-dns.alpha.kubernetes.io/hostname": "fluentd.magmacharmers.com"
+            }
         )
 
         self.cert_certifier = CertCertifierRequires(charm=self, relationship_name="cert-certifier")
