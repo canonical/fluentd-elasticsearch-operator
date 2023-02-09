@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install tox
-        run: pip install tox
+        run: pip install tox==4.4.5
       - name: Run tests using tox
         run: tox -e lint
 
@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install tox
-        run: pip install tox
+        run: pip install tox==4.4.5
       - name: Run tests using tox
         run: tox -e static
 
@@ -30,6 +30,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install tox
-        run: pip install tox
+        run: pip install tox==4.4.5
       - name: Run tests using tox
         run: tox -e unit

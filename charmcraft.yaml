@@ -9,9 +9,9 @@ bases:
 parts:
   charm:
     build-packages:
-      - libffi-dev
-      - libssl-dev
-      - rustc
-      - cargo
+      - libffi-dev=3.3-4
+      - libssl-dev=1.1.1f-1ubuntu2.17
+      - rustc=1.61.0+dfsg1~llvm-1~exp1ubuntu0.20.04.1
+      - cargo=0.62.0ubuntu0libgit2-0ubuntu0.20.04.1
     charm-python-packages:
-      - MarkupSafe
+      - MarkupSafe==2.1.2

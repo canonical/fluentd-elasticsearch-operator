@@ -1,6 +1,6 @@
-cryptography
-ops
-jsonschema
-Jinja2
-lightkube
-lightkube-models
+cryptography==39.0.1
+ops==2.0.0
+jsonschema==4.17.3
+Jinja2==3.1.2
+lightkube==0.12.0
+lightkube-models==1.26.0.4
