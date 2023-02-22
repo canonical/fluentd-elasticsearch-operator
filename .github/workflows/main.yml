@@ -8,6 +8,7 @@ on:
 
 jobs:
   lint-report:
+    name: Lint report
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -17,6 +18,7 @@ jobs:
         run: tox -e lint
 
   static-analysis:
+    name: Static analysis
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -26,6 +28,7 @@ jobs:
         run: tox -e static
 
   unit-tests-with-coverage:
+    name: Unit tests
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -33,3 +36,24 @@ jobs:
         run: pip install tox
       - name: Run tests using tox
         run: tox -e unit
+
+  integration-test:
+    name: Integration tests
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup operator environment
+        uses: charmed-kubernetes/actions-operator@main
+        with:
+          provider: microk8s
+          channel: 1.26-strict/stable
+          juju-channel: 3.1/stable
+      - name: Run integration tests
+        run: tox -e integration
+      - name: Archive charmcraft logs
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: charmcraft-logs
+          path: /home/runner/.local/state/charmcraft/log/*.log
