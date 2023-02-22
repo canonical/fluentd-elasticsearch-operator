@@ -150,6 +150,26 @@ class TestCharm(unittest.TestCase):
             ]
         )
 
+    def test_given_domain_config_is_invalid_when_pebble_ready_then_status_is_blocked(self):
+        event = Mock()
+        config = {"domain": "very wrong"}
+        self.harness.update_config(key_values=config)
+
+        self.harness.charm.on.fluentd_pebble_ready.emit(event)
+
+        assert self.harness.charm.unit.status == BlockedStatus("Config 'domain' is not valid")
+
+    def test_given_elasticsearch_config_is_invalid_when_pebble_ready_then_status_is_blocked(self):
+        event = Mock()
+        config = {"elasticsearch-url": "very wrong"}
+        self.harness.update_config(key_values=config)
+
+        self.harness.charm.on.fluentd_pebble_ready.emit(event)
+
+        assert self.harness.charm.unit.status == BlockedStatus(
+            "Config for elasticsearch is not valid. Format should be <hostname>:<port>"
+        )
+
     def test_given_relations_not_created_when_pebble_ready_then_status_is_blocked(self):
         event = Mock()
 

@@ -106,6 +106,14 @@ class FluentdElasticsearchCharm(CharmBase):
         Args:
             event: Juju event (PebbleReadyEvent)
         """
+        if not self._domain_config_is_valid:
+            self.unit.status = BlockedStatus("Config 'domain' is not valid")
+            return
+        if not self._elasticsearch_url_is_valid:
+            self.unit.status = BlockedStatus(
+                "Config for elasticsearch is not valid. Format should be <hostname>:<port>"
+            )
+            return
         if not self._relations_created:
             event.defer()
             return
@@ -183,6 +191,11 @@ class FluentdElasticsearchCharm(CharmBase):
         if not self._peer_relation_created:
             self.unit.status = WaitingStatus("Waiting for replicas relation to be created")
             event.defer()
+            return
+        if not self._elasticsearch_url_is_valid:
+            self.unit.status = BlockedStatus(
+                "Config for elasticsearch is not valid. Format should be <hostname>:<port>"
+            )
             return
         self._push_fluentd_cert_to_peer_relation_data(event.certificate)
         self._push_ca_cert_to_peer_relation_data(event.ca)
