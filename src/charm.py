@@ -157,6 +157,9 @@ class FluentdElasticsearchCharm(CharmBase):
         """
         if not self.unit.is_leader():
             return
+        if not self._domain_config_is_valid:
+            self.unit.status = BlockedStatus("Config 'domain' is not valid")
+            return
         if not self._peer_relation_created:
             self.unit.status = WaitingStatus("Waiting for replicas relation to be created")
             event.defer()

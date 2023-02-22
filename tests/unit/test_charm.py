@@ -273,6 +273,17 @@ class TestCharm(unittest.TestCase):
             "Waiting for replicas relation to be created"
         )
 
+    def test_given_domain_config_is_invalid_when_fluentd_certs_relation_joined_then_status_is_blocked(  # noqa: E501
+        self,
+    ):
+        self.harness.set_leader(is_leader=True)
+        config = {"domain": "very wrong"}
+        self.harness.update_config(key_values=config)
+
+        self._create_fluentd_certs_relation()
+
+        assert self.harness.charm.unit.status == BlockedStatus("Config 'domain' is not valid")
+
     def test_given_peer_relation_created_and_fluentd_certs_not_in_peer_relation_data_but_fluentd_private_key_not_in_peer_relation_data_when_fluentd_certs_relation_joined_then_status_is_waiting(  # noqa: E501
         self,
     ):
