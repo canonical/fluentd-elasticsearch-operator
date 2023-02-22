@@ -10,13 +10,10 @@ import pytest
 import yaml
 
 METADATA = yaml.safe_load(Path("./metadata.yaml").read_text())
-CERTIFIER_METADATA = yaml.safe_load(Path("../orc8r-certifier-operator/metadata.yaml").read_text())
 
 APPLICATION_NAME = "fluentd"
 CHARM_NAME = "fluentd-elasticsearch"
 CERTIFIER_APPLICATION_NAME = "orc8r-certifier"
-CERTIFIER_CHARM_NAME = "magma-orc8r-certifier"
-CERTIFIER_CHARM_FILE_NAME = "magma-orc8r-certifier_ubuntu-20.04-amd64.charm"
 DOMAIN = "example.com"
 ELASTICSEARCH_URL = "dummy-es.com:1234"
 
@@ -68,7 +65,7 @@ class TestOrc8rCertifier:
         await ops_test.model.applications[APPLICATION_NAME].scale(1)
 
         await ops_test.model.wait_for_idle(
-            apps=[APPLICATION_NAME], status="active", timeout=1000, wait_for_exact_units=1
+            apps=[APPLICATION_NAME], status="active", timeout=60, wait_for_exact_units=1
         )
 
     @staticmethod
@@ -92,27 +89,17 @@ class TestOrc8rCertifier:
                 "generate-self-signed-certificates": True,
                 "ca-common-name": f"rootca.{DOMAIN}",
             },
-            channel="edge",
+            channel="stable",
         )
 
-    async def _deploy_orc8r_certifier(self, ops_test):
-        certifier_charm = self._find_charm(
-            "../orc8r-certifier-operator", CERTIFIER_CHARM_FILE_NAME
-        )
-        if not certifier_charm:
-            certifier_charm = await ops_test.build_charm("../orc8r-certifier-operator/")
-        resources = {
-            f"{CERTIFIER_CHARM_NAME}-image": CERTIFIER_METADATA["resources"][
-                f"{CERTIFIER_CHARM_NAME}-image"
-            ]["upstream-source"],
-        }
+    @staticmethod
+    async def _deploy_orc8r_certifier(ops_test):
         await ops_test.model.deploy(
-            certifier_charm,
-            resources=resources,
+            "magma-orc8r-certifier",
             application_name=CERTIFIER_APPLICATION_NAME,
             config={"domain": DOMAIN},
             trust=True,
-            series="focal",
+            channel="edge",
         )
         await ops_test.model.add_relation(
             relation1=CERTIFIER_APPLICATION_NAME, relation2="postgresql-k8s:db"
