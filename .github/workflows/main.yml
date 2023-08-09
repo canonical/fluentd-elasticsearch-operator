@@ -9,7 +9,7 @@ on:
 jobs:
   lint-report:
     name: Lint report
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - name: Install tox
@@ -19,7 +19,7 @@ jobs:
 
   static-analysis:
     name: Static analysis
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - name: Install tox
@@ -29,7 +29,7 @@ jobs:
 
   unit-tests-with-coverage:
     name: Unit tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - name: Install tox
@@ -39,7 +39,7 @@ jobs:
 
   integration-test:
     name: Integration tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -69,7 +69,7 @@ jobs:
     if: github.ref_name == 'main'
     needs:
       - integration-test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
